@@ -1,17 +1,16 @@
 const mongoose= require("mongoose")
 require('dotenv').config();
-MONGO= process.env.MONGO;
-const { timeStamp } = require("node:console")
+const MONGOdata= process.env.MONGOdata;
 
-mongoose.connect(MONGO).then(()=>
+mongoose.connect(MONGOdata).then(()=>
 console.log("MongoDB Connected")).catch((err)=>{
     console.error(err)
 })
 
-const memeSchema= new mongoose.schema({
+const memeSchema= new mongoose.Schema({
     title:String,
     image: String,
     sound: String
-},{timeStamp: true});
+},{timeStamps: true});
 
 module.exports = mongoose.model("meme", memeSchema);

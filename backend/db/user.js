@@ -1,12 +1,12 @@
 const mongoose= require("mongoose");
 require('dotenv').config();
-MONGO= process.env.MONGO;
+const MONGOuser= process.env.MONGOuser;
 
-mongoose.connect(MONGO).then(()=>
+mongoose.connect(MONGOuser).then(()=>
 console.log("MongoDB Connected")).catch((err)=>{
     console.error(err)
 })
-const userSchema= new mongoose.schema({
+const userSchema= new mongoose.Schema({
     email: {
         type: String,
         required: true,
