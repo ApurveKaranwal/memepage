@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const { User } = require("../db/user.js") 
 
 router.post('/signup', async(req,res) => {
-    const parsedPayload = sign.safeParase(req.body)
+    const parsedPayload = sign.safeParse(req.body)
     if(!parsedPayload.success) {
         res.status(411).json({
             msg: "you sent wrong inputs"
@@ -19,16 +20,41 @@ router.post('/signup', async(req,res) => {
             msg: "Signed Up successfully"
         })
     }
-    catch((err)=>
+    catch(err) {
         console.error(err)
     res.status(500).json({
         msg: "internal server error"
     });
-    )
-});
+};
 
-app.get("/signin", async(req,res) => {
-    try {
-        const
+router.post("/signin", async(req,res) => {
+    const parsedPayload = sign.safeParse(req.body)
+    if (!parsedPayload.success) {
+        res.status(500).json({
+            msg: "User not found"
+        });
+        return;
     }
-})
+    try {
+        const { email, password } = parsedPayload.data;
+        const user = await User.findOne({
+            email,
+            password
+        });
+        if (!user) {
+            return res.status(400).json({
+                msg: "User not found"
+            });
+        }
+
+        res.json({
+            msg: "Login Successful"
+        })
+    }
+    catch(err) {
+        console.error(err);
+        res.status(500).json({
+            msg: "Internal server error"
+        });
+    }
+});
