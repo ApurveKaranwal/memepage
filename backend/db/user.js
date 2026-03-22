@@ -1,7 +1,6 @@
 const mongoose= require("mongoose");
 require('dotenv').config();
 const MONGOuser= process.env.MONGOuser;
-
 mongoose.connect(MONGOuser).then(()=>
 console.log("MongoDB Connected")).catch((err)=>{
     console.error(err)
