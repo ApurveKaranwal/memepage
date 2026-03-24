@@ -9,8 +9,9 @@ console.log("MongoDB Connected")).catch((err)=>{
 
 const memeSchema= new mongoose.Schema({
     title:String,
-    image: String,
-    sound: String
+    imageUrl: String,
+    soundUrl: String,
+    upvotes: Number
 },{timeStamps: true});
 
 module.exports = mongoose.model("meme", memeSchema);

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { User } = require("../db/user.js") 
+const { User } = require("../db/user") 
+const { sign } =  require("../types")
 
 router.post('/signup', async(req,res) => {
     const parsedPayload = sign.safeParse(req.body)
