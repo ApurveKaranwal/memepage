@@ -4,6 +4,6 @@ const sign = zod.object({
     password: zod.string()
 })
 
-modulde.exports = {
+module.exports = {
     sign
 }

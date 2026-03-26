@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { User } = require("../db/user") 
+const User = require("../db/user") 
 const { sign } =  require("../types")
 
 router.post('/signup', async(req,res) => {
@@ -13,7 +13,7 @@ router.post('/signup', async(req,res) => {
     }
     try{
         const data = parsedPayload.data;
-        await user.create({
+        await User.create({
             email: data.email,
             password: data.password
         });
@@ -27,6 +27,8 @@ router.post('/signup', async(req,res) => {
         msg: "internal server error"
     });
 };
+});
+
 
 router.post("/signin", async(req,res) => {
     const parsedPayload = sign.safeParse(req.body)
@@ -58,4 +60,6 @@ router.post("/signin", async(req,res) => {
             msg: "Internal server error"
         });
     }
-});
+    });
+
+module.exports = router;
