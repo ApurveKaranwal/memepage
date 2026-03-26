@@ -29,7 +29,6 @@ router.post('/signup', async(req,res) => {
 };
 });
 
-
 router.post("/signin", async(req,res) => {
     const parsedPayload = sign.safeParse(req.body)
     if (!parsedPayload.success) {

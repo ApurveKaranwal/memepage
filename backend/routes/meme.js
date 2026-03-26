@@ -22,11 +22,12 @@ router.post("/upload",
                     msg: "Title and Image is required"
                 })
             }
-            const imageUplaod = await cloudinary.uploader.upload(
+            const imageUpload = await cloudinary.uploader.upload(
                 imageFile.path,
                 { folder: "memes/images" }
             );
             let soundUrl = null;
+            const imageUrl = imageUpload.secure_url;
             if (soundFile) {
                 const soundUpload = await cloudinary.uploader.upload(
                     soundFile.path,
@@ -55,11 +56,8 @@ router.post("/upload",
             }
             fs.unlinkSync(imageFile.path);
             if(soundFile){
-                fs.unlikeSync(soundFile.path);
+                fs.unlinkSync(soundFile.path);
             }
-            res.json({
-                msg: "Meme uploaded successfully"
-            })
         }
         catch (err) {
             console.error(err);
@@ -69,7 +67,7 @@ router.post("/upload",
         }
     });
 
-router.post("/", async (req,res) => {
+router.get("/", async (req,res) => {
     try {
         const memes = await meme.find().sort({
             createdAt: -1
