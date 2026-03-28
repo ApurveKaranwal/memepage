@@ -19,7 +19,7 @@ const uploadToCloudinary = (buffer, options) => {
                 }
             }
             );
-            streamifier.createReadStream(buffer).pipe(stream);
+            streamifier.createReadStream(buffer).pipe(stream); //converts buffer into readable stream and then pipe(send) it to cloudinary
         
     });
 };
