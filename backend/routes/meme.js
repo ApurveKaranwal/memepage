@@ -4,7 +4,25 @@ const router = express.Router();
 const meme = require("../db/meme");
 const upload = require("../middleware/upload");
 const cloudinary = require("../db/cloudinary");
-const fs = require("fs");
+const streamifier = require("streamifier");
+
+const uploadToCloudinary = (buffer, options) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            options,
+            (error, result) => {
+                if (result) {
+                    resolve(result);
+                }
+                else{
+                    reject(error);
+                }
+            }
+            );
+            streamifier.createReadStream(buffer).pipe(stream);
+        
+    });
+};
 
 router.post("/upload",
     upload.fields([
@@ -14,34 +32,36 @@ router.post("/upload",
     async (req,res) => {
         try {
             const { title } = req.body;
-            const imageFile = req.files["image"]?.[0];
-            const soundFile = req.files["sound"]?.[0];
+            const imageFile = req.files?.image?.[0];
+            const soundFile = req.files?.sound?.[0];
 
             if (!title || !imageFile) {
                 return res.status(400).json({
                     msg: "Title and Image is required"
                 })
             }
-            const imageUpload = await cloudinary.uploader.upload(
-                imageFile.path,
+            const imageUpload = await uploadToCloudinary(
+                imageFile.buffer,
                 { folder: "memes/images" }
             );
+            
             let soundUrl = null;
-            const imageUrl = imageUpload.secure_url;
+
             if (soundFile) {
-                const soundUpload = await cloudinary.uploader.upload(
-                    soundFile.path,
-                    { 
+                const soundUpload = await uploadToCloudinary(
+                    soundFile.buffer,
+                    {
                         resource_type: "video",
                         folder: "memes/sounds"
                     }
                 );
                 soundUrl = soundUpload.secure_url;
             }
+
             try {
                 await meme.create({
                     title,
-                    imageUrl,
+                    imageUrl: imageUpload.secure_url,
                     soundUrl
                 });
                 res.json({
@@ -53,10 +73,6 @@ router.post("/upload",
                 res.status(500).json({
                     msg: "internal server error"
                 })
-            }
-            fs.unlinkSync(imageFile.path);
-            if(soundFile){
-                fs.unlinkSync(soundFile.path);
             }
         }
         catch (err) {
