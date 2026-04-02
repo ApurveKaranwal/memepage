@@ -29,7 +29,7 @@ export default function Signin() {
             <form onSubmit={handleSubmit}>
                 <input
                 name="email"
-                palceholder="Email"
+                placeholder="Email"
                 onChange={handleChange}
                 />
                 <br />
