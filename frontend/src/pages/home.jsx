@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
+import api from "../services/api";
+import MemeCard from "../components/MemeCard";
+import UploadModal from "../components/UploadModal";
+import Navbar from "../components/Navbar"
 export default function Home(){
   const [memes, setMemes] = useState([]);
-  useEffect(() => {
+  const [showModal, setShowModal] = useState([]);
+
+  useEffect(() => { 
     async function fetchMemes(){
       const res = await axios.get("http://localhost:5000/api/memes")
       setMemes(res.data);
@@ -11,18 +16,23 @@ export default function Home(){
 
     fetchMemes();
   }, []);
+
   return (
     <div>
-      <h1>Meme Page</h1>
+      <Navbar onUpload={() => setShowModal(true)} />
+      {showModal && (
+        <UploadModal closeModal={() => setShowModal(false)} />
+      )}
 
-      {memes.map((meme) => (
-        <div key={meme._id}>
-          <img src = {meme.imageUrl} alt="meme" width="300" />
-          <p>{meme.caption}</p>
-          <p>{meme.username}</p>
-          <hr />
-        </div>
-      ))}
+      <h1>All Memes</h1>
+
+      {memes.length === 0 ? (
+        <p>No memes found</p>
+      ) : (
+        memes.map((meme) => (
+          <MemeCard key={meme._id} meme={meme} />
+        ))
+      )}
     </div>
   );
 }

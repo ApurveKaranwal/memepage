@@ -20,7 +20,7 @@ export default function Signin() {
             "http://localhost:5000/api/auth/signin", form
         );
         localStorage.setItem("token", res.data.token);
-        navigate("/");
+        navigate("/home");
     };
     return (
         <div>
