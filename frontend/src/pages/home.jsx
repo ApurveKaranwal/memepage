@@ -27,7 +27,7 @@ export default function Home(){
       <h1>All Memes</h1>
 
       {memes.length === 0 ? (
-        <p>No memes found</p>
+        <p>No Memes found</p>
       ) : (
         memes.map((meme) => (
           <MemeCard key={meme._id} meme={meme} />
