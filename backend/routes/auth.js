@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require("../db/user") 
 const { sign } =  require("../types")
-
+const loginLimiter = require("../middleware/loginLimiter")
 router.post('/signup', async(req,res) => {
     const parsedPayload = sign.safeParse(req.body)
     if(!parsedPayload.success) {
@@ -29,7 +29,7 @@ router.post('/signup', async(req,res) => {
 };
 });
 
-router.post("/signin", async(req,res) => {
+router.post("/signin", loginLimiter, async(req,res) => {
     const parsedPayload = sign.safeParse(req.body)
     if (!parsedPayload.success) {
         res.status(500).json({
