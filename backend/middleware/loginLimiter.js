@@ -1,7 +1,7 @@
-const createClient = require("redis");
-const redis = createClient();
+const Redis = require("ioredis")
+const redis = new Redis()
 
-const loginLimiter = async (req, res, next) {
+const loginLimiter = async (req, res, next) => {
     try {
         const identifier = req.body.email || req.ip
         const key = `login:${identifier}`
@@ -13,7 +13,7 @@ const loginLimiter = async (req, res, next) {
 
         const  count = await redis.zcard(key)
 
-        if(count>5) {
+        if(count > 5) {
             return res.status(429).json({
                 msg: "too many login attempts, try again later."
             })
@@ -26,4 +26,4 @@ const loginLimiter = async (req, res, next) {
     }
 }
 
-export default loginLimiter
+module.exports = loginLimiter

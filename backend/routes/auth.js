@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../db/user") 
 const { sign } =  require("../types")
 const loginLimiter = require("../middleware/loginLimiter")
+
 router.post('/signup', async(req,res) => {
     const parsedPayload = sign.safeParse(req.body)
     if(!parsedPayload.success) {
