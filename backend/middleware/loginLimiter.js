@@ -15,7 +15,7 @@ const loginLimiter = async (req, res, next) => {
 
         if(count > 5) {
             return res.status(429).json({
-                msg: "too many login attempts, try again later."
+                msg: "Too many login attempts, Try again later."
             })
         }
         await redis.expire(key, 60)
