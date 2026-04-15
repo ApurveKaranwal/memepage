@@ -1,13 +1,35 @@
-
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const http = require("http")
+const { Server } =  require("socket.io")
+const { sub } = require("./config/redis")
 
 const connectDB = require("./config/db");
 
 dotenv.config(); //loading env variables
 
 const app =  express();
+const server = http.createServer(app)
+
+const io = new Server(server, {
+    cors: { origin: "*"}
+})
+
+io.on("connection", (socket) => {
+    console.log("User connected:", socket.id)
+})
+
+sub.subscribe("new_meme")
+sub.on("message", (channel, message) => {
+    const meme = JSON.parse(message)
+
+    console.log("New meme event received", meme)
+    io.emit("new_meme_notification", {
+        message: `${meme.creator} uploaded a new meme`,
+        memeId: meme._id
+    })
+})
 
 connectDB(); //connecting Database
 
@@ -36,7 +58,7 @@ app.use((err,req,res,next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);
 })
 

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const { pub } = require("../config/redis")
 const meme = require("../db/meme");
 const upload = require("../middleware/upload");
 const cloudinary = require("../db/cloudinary");
@@ -59,11 +59,14 @@ router.post("/upload",
             }
 
             try {
-                await meme.create({
+                const newMeme = await meme.create({
                     title,
                     imageUrl: imageUpload.secure_url,
-                    soundUrl
+                    soundUrl,
+                    creator: "Apurve"
                 });
+                await pub.publish("new_meme", JSON.stringify(newMeme));
+
                 res.json({
                     msg: "Saved successfully"
                 })
