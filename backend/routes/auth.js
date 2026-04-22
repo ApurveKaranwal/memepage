@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const User = require("../db/user") 
-const { sign } =  require("../types")
+const { signin, signup } =  require("../types")
 const loginLimiter = require("../middleware/loginLimiter")
 
 router.post('/signup', async(req,res) => {
-    const parsedPayload = sign.safeParse(req.body)
+    const parsedPayload = signup.safeParse(req.body)
     if(!parsedPayload.success) {
         res.status(411).json({
             msg: "you sent wrong inputs"
@@ -32,7 +32,7 @@ router.post('/signup', async(req,res) => {
 });
 
 router.post("/signin", loginLimiter, async(req,res) => {
-    const parsedPayload = sign.safeParse(req.body)
+    const parsedPayload = signin.safeParse(req.body)
     if (!parsedPayload.success) {
         res.status(500).json({
             msg: "User not found"
