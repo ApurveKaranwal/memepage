@@ -6,6 +6,7 @@ export default function Signup(){
 const navigate = useNavigate();
 
 const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
 });
@@ -38,6 +39,13 @@ return (
             name="password"
             type="password"
             placeholder="Password"
+            onChange={handleChange}
+            />
+            <br />
+
+            <input
+            name="name"
+            placeholder="Name"
             onChange={handleChange}
             />
             <br />
