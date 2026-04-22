@@ -15,6 +15,7 @@ router.post('/signup', async(req,res) => {
     try{
         const data = parsedPayload.data;
         await User.create({
+            name: data.name,
             email: data.email,
             password: data.password
         });
