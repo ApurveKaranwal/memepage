@@ -33,3 +33,4 @@ coverage/
 # Optional: lock files (keep if working in team)
 # package-lock.json
 # yarn.lock
+/generated/prisma

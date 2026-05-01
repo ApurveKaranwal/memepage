@@ -38,6 +38,7 @@ app.use(express.json());
 
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/memes", require("./routes/meme"));
+app.use("/api/otp", require("./routes/otp"));
 
 app.get("/", (req, res) => {
     res.send("meme api running");
