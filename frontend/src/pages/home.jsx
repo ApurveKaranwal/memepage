@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import api from "../services/api";
 import MemeCard from "../components/MemeCard";
 import UploadModal from "../components/UploadModal";
 import Navbar from "../components/Navbar"
 export default function Home(){
   const [memes, setMemes] = useState([]);
-  const [showModal, setShowModal] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => { 
     async function fetchMemes(){
-      const res = await axios.get("http://localhost:5000/api/memes")
+      const res = await api.get("/memes");
       setMemes(res.data);
     }
 

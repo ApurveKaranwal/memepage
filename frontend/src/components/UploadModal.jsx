@@ -9,10 +9,10 @@ export default function UploadModal({ closeModal }) {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append("caption", caption);
+        formData.append("title", caption);
         formData.append("image", image);
 
-        await axios.post("http://localhost:5000/api/memes", formData);
+        await axios.post("http://localhost:5000/api/memes/upload", formData);
         closeModal();
         window.location.reload();
     };
