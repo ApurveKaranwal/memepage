@@ -21,8 +21,13 @@ const handleChange = (e) => {
 const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await axios.post("http://localhost:5000/api/auth/signup", form);
-    navigate("/signin")
+
+  await axios.post("http://localhost:5000/api/auth/signup", form);
+  await axios.post("http://localhost:5000/api/otp/send-otp", {
+    email: form.email
+  })
+  
+  navigate("/verify-otp", { state: { email: form.email } });
 };
 return (
     <div>
