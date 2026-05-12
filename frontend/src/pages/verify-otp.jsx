@@ -25,6 +25,7 @@ export default function VerifyOtp() {
       }
     }
     catch (err) {
+      console.error(err);
       setMsg("Invalid or expired OTP");
     }
   };
