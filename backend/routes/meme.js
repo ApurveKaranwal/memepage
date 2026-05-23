@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { pub } = require("../config/redis")
-const meme = require("../db/meme");
+const { prisma } = require("../config/db");
 const upload = require("../middleware/upload");
 const cloudinary = require("../db/cloudinary");
 const streamifier = require("streamifier");
@@ -59,11 +59,13 @@ router.post("/upload",
             }
 
             try {
-                const newMeme = await meme.create({
+                const newMeme = await prisma.meme.create({
+                  data: {
                     title,
                     imageUrl: imageUpload.secure_url,
                     soundUrl,
                     creator: "Apurve"
+                  }
                 });
                 await pub.publish("new_meme", JSON.stringify(newMeme));
 
@@ -88,9 +90,11 @@ router.post("/upload",
 
 router.get("/", async (req,res) => {
     try {
-        const memes = await meme.find().sort({
-            createdAt: -1
-        });
+      const memes = await prisma.meme.findMany({
+        orderBy: {
+            createdAt: "desc"
+        }
+      });
         res.json(memes);
     }
     catch (err){

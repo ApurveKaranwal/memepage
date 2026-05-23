@@ -5,7 +5,7 @@ const http = require("http")
 const { Server } =  require("socket.io")
 const { sub } = require("./config/redis")
 
-const connectDB = require("./config/db");
+const { connectDB } = require("./config/db");
 
 dotenv.config(); //loading env variables
 
@@ -27,7 +27,7 @@ sub.on("message", (channel, message) => {
     console.log("New meme event received", meme)
     io.emit("new_meme_notification", {
         message: `${meme.creator} uploaded a new meme`,
-        memeId: meme._id
+        memeId: meme.id
     })
 })
 

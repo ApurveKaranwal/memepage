@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require("../db/user") 
+const { prisma } = require("../config/db") 
 const { signin, signup } =  require("../types")
 const loginLimiter = require("../middleware/loginLimiter")
 
@@ -13,12 +13,15 @@ router.post('/signup', async(req,res) => {
         return;
     }
     try{
-        const data = parsedPayload.data;
-        await User.create({
-            name: data.name,
-            email: data.email,
-            password: data.password
-        });
+      const data = parsedPayload.data;
+      await prisma.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          password: data.password
+        }
+      });
+      
         res.json({
             msg: "Signed Up successfully"
         })
@@ -41,15 +44,23 @@ router.post("/signin", loginLimiter, async(req,res) => {
     }
     try {
         const { email, password } = parsedPayload.data;
-        const user = await User.findOne({
-            email,
-            password
-        });
+      const user = await prisma.user.findUnique({
+        where: {
+          email
+        }
+      });
+      
         if (!user) {
             return res.status(400).json({
                 msg: "User not found"
             });
         }
+
+      if (user.password !== password) {
+        return res.status(404).json({
+          msg: "Wrong Password"
+        });
+      }
 
         res.json({
             msg: "Login Successful"

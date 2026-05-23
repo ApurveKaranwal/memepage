@@ -6,11 +6,13 @@ const connectDB = async () => {
     await prisma.$connect();
     console.log("PostgreSQL connected successfully");
   }
+  
   catch (err) {
-    console.log("Database connection failed:", err.message);
+    console.error("Database connection failed:", err.message);
     process.exit(1);
   }
 };
+
 module.exports = {
   prisma,
   connectDB
