@@ -1,8 +1,22 @@
-# Project is in progress, will add README.md soon after i complete the project
+# Project is currently under active development
 
-# Problems to fix:
-##1) After signup, the credentials gets stored even without email getting verified, some routing is wrong here
-##2) Needs a refresh button on the "Verify Otp" page, so that when the OTP gets expired, we can refresh the OTP
-##3) After verifying the OTP, we need to redirect the user directly to home page and not redirect them to signin page
-##4) We need to show the user's name on homepage, instead of default Apurve.
-##5) Upvote and Downvote Button is not button
+README.md will be added once the core features are completed.
+
+## Current Issues / TODO
+
+### 1. Email verification flow issue
+User credentials are currently stored in the database before OTP/email verification is completed.  
+Need to fix the auth flow so users are only persisted after successful verification.
+
+### 2. OTP refresh / resend functionality
+Add a "Resend OTP" or "Refresh OTP" button on the Verify OTP page when the OTP expires.
+
+### 3. Redirect after OTP verification
+After successful OTP verification, users should be redirected directly to the homepage/dashboard instead of the signin page.
+
+### 4. Dynamic username on homepage
+Currently the homepage displays a hardcoded username ("Apurve").  
+Need to fetch and display the authenticated user's actual name.
+
+### 5. Upvote / Downvote interaction issue
+Upvote and Downvote controls are currently non-functional and need proper button handlers and backend integration.
