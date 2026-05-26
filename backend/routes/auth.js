@@ -1,46 +1,60 @@
 const express = require('express');
 const router = express.Router();
-const { prisma } = require("../config/db") 
 const { signin, signup } =  require("../types")
 const loginLimiter = require("../middleware/loginLimiter")
+const Redis = require("ioredis");
+const { prisma } = require("../config/db");
+
+const redis = new Redis()
 
 router.post('/signup', async(req,res) => {
     const parsedPayload = signup.safeParse(req.body)
     if(!parsedPayload.success) {
-        res.status(411).json({
+        return res.status(400).json({
             msg: "you sent wrong inputs"
         });
-        return;
     }
+  
     try{
-      const data = parsedPayload.data;
-      await prisma.user.create({
-        data: {
-          name: data.name,
-          email: data.email,
-          password: data.password
-        }
+      const { name, email, password } = parsedPayload.data;
+      const existingUser = await prisma.user.findUnique({
+        where: { email }
       });
       
-        res.json({
-            msg: "Signed Up successfully"
-        })
-    }
+      if (existingUser) {
+        return res.status(400).json({
+          msg: "Email is already registered"
+        });
+      }
+      
+      await redis.set(
+        `signup:${email}`,
+        JSON.stringify({ 
+          name,
+          email,
+          password
+        }),
+        "EX", 300
+      );
+      
+      res.json({
+        msg: "Proceed to OTP verification"
+      });
+  }
     catch(err) {
         console.error(err)
-    res.status(500).json({
+    res.status(401).json({
         msg: "Internal server error"
-    });
-};
+      });
+    };
 });
 
 router.post("/signin", loginLimiter, async(req,res) => {
     const parsedPayload = signin.safeParse(req.body)
     if (!parsedPayload.success) {
-        res.status(500).json({
-            msg: "User not found"
+        return res.status(500).json({
+            msg: "Invalid email or password"
         });
-        return;
     }
     try {
         const { email, password } = parsedPayload.data;
@@ -52,13 +66,13 @@ router.post("/signin", loginLimiter, async(req,res) => {
       
         if (!user) {
             return res.status(400).json({
-                msg: "User not found"
+                msg: "Invalid email or password"
             });
         }
 
       if (user.password !== password) {
-        return res.status(404).json({
-          msg: "Wrong Password"
+        return res.status(401).json({
+          msg: "Invalid email or password"
         });
       }
 
@@ -68,7 +82,7 @@ router.post("/signin", loginLimiter, async(req,res) => {
     }
     catch(err) {
         console.error(err);
-        res.status(500).json({
+        return res.status(500).json({
             msg: "Internal server error"
         });
     }

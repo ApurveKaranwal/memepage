@@ -67,6 +67,7 @@ router.post("/upload",
                     creator: "Apurve"
                   }
                 });
+              
                 await pub.publish("new_meme", JSON.stringify(newMeme));
 
                 res.json({

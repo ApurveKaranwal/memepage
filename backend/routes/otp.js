@@ -1,13 +1,10 @@
 const express = require('express');
 const otpQueue = require('../queue/otpQueue');
-const Redis = require('ioredis');
+const { prisma } = require("../config/db") 
+const Redis = require("ioredis");
 const crypto = require('crypto');
 
-const redis = new Redis({
-  host: '127.0.0.1',
-  port: 6379
-});
-
+const redis = new Redis()
 const router = express.Router()
 
 router.post("/send-otp", async (req, res) => {
@@ -47,24 +44,52 @@ router.post("/verify-otp", async (req, res) => {
       msg: "Email and OTP required"
     });
   }
+  
   const storedOtp = await redis.get(`otp:${email}`);
+  const rawData = await redis.get(`signup:${email}`);
+
+  if (!rawData) {
+    return res.status(400).json({
+      msg: "Signup session Expired"
+    });
+  }
+  const data = JSON.parse(rawData);
 
   if (!storedOtp) {
     return res.status(400).json({
       msg: "OTP Expired"
     });
   }
+  
 
   if (storedOtp !== String(otp)) {
-    return res.json({
+    return res.status(400).json({
       msg: "Invalid OTP"
     });
   }
-
+  
+    try {
+      await prisma.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          password: data.password
+        }
+      });
+    }
+    
+    catch (err) {
+      console.error("Could not load data into PostgreSQL", err);
+      return res.status(500).json({
+        msg: "PostgreSQL Error"
+      });
+    }
+  
   await redis.del(`otp:${email}`);
+  await redis.del(`signup:${email}`);
 
   res.json({
-    msg: "Login Successful"
+    msg: "Signup Successful"
   });
 });
 
